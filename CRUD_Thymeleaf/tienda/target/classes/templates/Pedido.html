@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TØP - Gestión de Pedidos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #e31937; --black: #050505; --yellow: #fce300; --white: #ffffff; --gray-card: rgba(18, 18, 18, 0.9); }
+        body { margin: 0; font-family: 'Roboto Mono', monospace; background-color: var(--black); color: var(--white); min-height: 100vh; overflow-x: hidden; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* NAVBAR ESTILO CLANCY */
+        .navbar { background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--red); padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: center; gap: 20px; backdrop-filter: blur(5px); }
+        .nav-link { color: var(--white); text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 1.1rem; text-transform: uppercase; transition: 0.3s; letter-spacing: 2px; }
+        .nav-link:hover { color: var(--red); border-bottom: 1px solid var(--red); }
+        .nav-active { color: var(--yellow) !important; }
+
+        .container-principal { position: relative; z-index: 10; max-width: 1200px; margin: 40px auto; background: var(--gray-card); padding: 30px; border-left: 5px solid var(--red); backdrop-filter: blur(10px); }
+        .titulo { font-family: 'Oswald', sans-serif; text-align: center; color: var(--white); font-size: 2.5rem; letter-spacing: 5px; margin-bottom: 30px; border-bottom: 2px solid var(--red); display: inline-block; width: 100%; padding-bottom: 10px; text-transform: uppercase; }
+        .header-acciones { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; }
+        .buscador-form { display: flex; gap: 10px; }
+        .input-search { background: #000; border: 1px solid #333; color: white; padding: 10px; font-family: 'Roboto Mono', monospace; }
+        .btn { padding: 10px 20px; cursor: pointer; border: none; font-family: 'Oswald', sans-serif; font-size: 1rem; text-transform: uppercase; transition: all 0.3s; text-decoration: none; }
+        .btn-buscar { background-color: var(--red); color: white; }
+        .btn-home { background-color: transparent; border: 1px solid var(--white); color: white; }
+        .btn-nuevo { background-color: var(--yellow); color: black; }
+        .btn-ver { background-color: var(--white); color: black; font-size: 0.8rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.3); }
+        th { background-color: #000; color: var(--red); font-family: 'Oswald', sans-serif; padding: 15px; border-bottom: 2px solid var(--red); }
+        td { padding: 15px; border-bottom: 1px solid #222; text-align: center; }
+        .btn-editar { background: transparent; border: 1px solid var(--yellow); color: var(--yellow); font-size: 0.8rem; }
+        .btn-eliminar { background: transparent; border: 1px solid var(--red); color: var(--red); font-size: 0.8rem; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); }
+        .modal-content { background-color: var(--gray-card); margin: 5% auto; padding: 30px; width: 400px; border: 2px solid var(--red); }
+        .campo { margin-bottom: 15px; text-align: left; }
+        .campo label { display: block; font-size: 0.8rem; color: var(--red); margin-bottom: 5px; }
+        .campo input, .campo select { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: white; box-sizing: border-box; }
+        .symbol-footer { text-align: center; margin-top: 30px; font-size: 1.8rem; color: var(--white); letter-spacing: 8px; }
+    </style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="nav-link">HOME</a>
+    <a th:href="@{/usuarios}" class="nav-link">USUARIOS</a>
+    <a th:href="@{/productos}" class="nav-link">PRODUCTOS</a>
+    <a th:href="@{/pedidos}" class="nav-link nav-active">PEDIDOS</a>
+    <a th:href="@{/detalles}" class="nav-link">DETALLES</a>
+</nav>
+
+<div class="container-principal">
+    <h1 class="titulo">CONTROL_DE_PEDIDOS</h1>
+    <div class="header-acciones">
+        <form th:action="@{/pedidos/buscar}" method="get" class="buscador-form">
+            <input type="number" name="id" class="input-search" placeholder="ID_PEDIDO" required>
+            <button type="submit" class="btn btn-buscar">BUSCAR</button>
+            <a th:href="@{/pedidos}" class="btn btn-home">REINICIAR</a>
+        </form>
+        <div style="display: flex; gap: 10px;">
+            <button type="button" onclick="abrirModal('nuevo')" class="btn btn-nuevo">+ NUEVO_PEDIDO</button>
+        </div>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>FECHA</th>
+            <th>TOTAL</th>
+            <th>USUARIO</th>
+            <th>DETALLES</th> <th>ACCIONES</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${pedidos}">
+            <td th:text="${p.idPedido}"></td>
+            <td th:text="${p.fechaPedido}"></td>
+            <td th:text="${'Q' + p.totalPedido}"></td>
+            <td th:text="${p.usuario.nombreUsuario + ' ' + p.usuario.apellidoUsuario}"></td>
+            <td>
+                <a th:href="@{/detalles/buscar(id=${p.idPedido})}" class="btn btn-ver">VER_PRODUCTOS</a>
+            </td>
+            <td>
+                <button class="btn btn-editar" th:data-id="${p.idPedido}" th:data-fecha="${p.fechaPedido}" th:data-total="${p.totalPedido}" th:data-user="${p.usuario.idUsuario}" onclick="prepararEditar(this)">EDITAR</button>
+                <button class="btn btn-eliminar" th:data-id="${p.idPedido}" onclick="prepararEliminar(this)">ELIMINAR</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="symbol-footer">|-/</div>
+</div>
+
+<div id="miModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitulo" style="color: white; font-family: 'Oswald';">EXPEDIENTE_PEDIDO</h2>
+        <form id="formPedido" method="post">
+            <input type="hidden" name="idPedido" id="inputID">
+            <div id="camposFormulario">
+                <div class="campo">
+                    <label>FECHA PEDIDO</label>
+                    <input type="text" name="fechaPedido" id="inputFecha" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="campo">
+                    <label>TOTAL</label>
+                    <input type="number" step="0.01" name="totalPedido" id="inputTotal">
+                </div>
+                <div class="campo">
+                    <label>USUARIO</label>
+                    <select name="usuario.idUsuario" id="inputUser">
+                        <option value="" disabled selected>Seleccione...</option>
+                        <option th:each="u : ${usuarios}" th:value="${u.idUsuario}" th:text="${u.nombreUsuario + ' ' + u.apellidoUsuario}"></option>
+                    </select>
+                </div>
+            </div>
+            <div id="msgEliminar" style="display:none; color: var(--red); margin: 20px 0;">¿ELIMINAR PEDIDO PERMANENTEMENTE?</div>
+            <div style="display: flex; justify-content: space-between;">
+                <button type="submit" id="btnAccion" class="btn btn-buscar">EJECUTAR</button>
+                <button type="button" onclick="cerrarModal()" class="btn btn-home">ABORTAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    class Particle {
+        constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2; this.speedY = Math.random() * 1 + 0.3; this.opacity = Math.random() * 0.5; }
+        update() { this.y -= this.speedY; if (this.y < 0) this.y = canvas.height; }
+        draw() { ctx.fillStyle = `rgba(227, 25, 55, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
+    function init() { for (let i = 0; i < 70; i++) particles.push(new Particle()); }
+    function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    init(); animate();
+
+    const modal = document.getElementById('miModal');
+    const form = document.getElementById('formPedido');
+
+    function abrirModal(tipo, id, fecha, total, user) {
+        modal.style.display = "block";
+        const msgEliminar = document.getElementById('msgEliminar');
+        const camposFormulario = document.getElementById('camposFormulario');
+        const btnAccion = document.getElementById('btnAccion');
+
+        msgEliminar.style.display = "none";
+        camposFormulario.style.display = "block";
+        btnAccion.type = "submit";
+        btnAccion.onclick = null;
+
+        if (tipo === 'nuevo') {
+            form.action = "/pedidos/guardar";
+            form.reset();
+        } else if (tipo === 'editar') {
+            form.action = "/pedidos/actualizar";
+            document.getElementById('inputID').value = id;
+            document.getElementById('inputNombre').value = nombre; // Nota: Corregir si es necesario
+            document.getElementById('inputFecha').value = fecha;
+            document.getElementById('inputTotal').value = total;
+            document.getElementById('inputUser').value = user;
+        } else if (tipo === 'eliminar') {
+            msgEliminar.style.display = "block";
+            camposFormulario.style.display = "none";
+            btnAccion.type = "button";
+            btnAccion.onclick = function() {
+                window.location.href = "/pedidos/eliminar/" + id;
+            };
+        }
+    }
+
+    function prepararEditar(btn) { abrirModal('editar', btn.dataset.id, btn.dataset.fecha, btn.dataset.total, btn.dataset.user); }
+    function prepararEliminar(btn) { abrirModal('eliminar', btn.dataset.id); }
+    function cerrarModal() { modal.style.display = "none"; }
+</script>
+</body>
+</html>

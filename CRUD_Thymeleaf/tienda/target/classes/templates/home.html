@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TØP - Centro de Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #e31937;
+            --black: #050505;
+            --yellow: #fce300;
+            --white: #ffffff;
+            --gray: rgba(18, 18, 18, 0.9);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--black);
+            font-family: 'Roboto Mono', monospace;
+            color: var(--white);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .navbar {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid var(--red);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-family: 'Oswald', sans-serif;
+            color: var(--white);
+            font-size: 1.8rem;
+            text-decoration: none;
+            letter-spacing: 3px;
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--white);
+            padding: 8px 15px;
+            font-family: 'Oswald', sans-serif;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .welcome-container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 80px auto;
+            text-align: center;
+            padding: 40px;
+            background: var(--gray);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .line {
+            width: 100px;
+            height: 4px;
+            background: var(--red);
+            margin: 20px auto;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card-menu {
+            padding: 40px 20px;
+            background: var(--red);
+            border: 2px solid var(--red);
+            text-decoration: none;
+            color: var(--white);
+            font-family: 'Oswald', sans-serif;
+            font-weight: bold;
+            font-size: 1.4rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-menu:hover {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(227, 25, 55, 0.4);
+        }
+
+        .symbol {
+            margin-top: 40px;
+            opacity: 0.8;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav class="navbar">
+    <a class="navbar-brand" th:href="@{/}">TØP TIENDA</a>
+    <div class="nav-links">
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn-logout">CERRAR_SESIÓN</button>
+        </form>
+    </div>
+</nav>
+
+<div class="welcome-container">
+    <h1>I AM CLANCY</h1>
+    <div class="line"></div>
+    <p>PANEL_DE_CONTROL / ACCESO_BASE_DE_DATOS_CONCEDIDO</p>
+
+    <div class="grid-menu">
+        <a th:href="@{/usuarios}" class="card-menu">Usuarios</a>
+        <a th:href="@{/categorias}" class="card-menu">Categorías</a>
+        <a th:href="@{/productos}" class="card-menu">Productos</a>
+        <a th:href="@{/pedidos}" class="card-menu">Pedidos</a>
+    </div>
+
+    <div class="symbol">|-/</div>
+</div>
+
+<script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = Math.random() * 1 - 0.5;
+            this.speedY = Math.random() * 1 + 0.3;
+            this.opacity = Math.random() * 0.5 + 0.1;
+        }
+
+        update() {
+            this.y -= this.speedY;
+            this.x += this.speedX;
+            if (this.y < 0) {
+                this.y = canvas.height;
+                this.x = Math.random() * canvas.width;
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(227, 25, 55, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+</script>
+
+</body>
+</html>

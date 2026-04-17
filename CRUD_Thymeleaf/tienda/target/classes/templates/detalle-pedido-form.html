@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${modoEdicion} ? 'TØP - Editar Detalle' : 'TØP - Nuevo Detalle'"></title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #e31937; --black: #050505; --yellow: #fce300; --white: #ffffff; --gray-card: rgba(18, 18, 18, 0.9); }
+        body { margin: 0; font-family: 'Roboto Mono', monospace; background-color: var(--black); color: var(--white); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .container { position: relative; z-index: 10; width: 100%; max-width: 480px; background: var(--gray-card); padding: 35px; border-left: 5px solid var(--red); backdrop-filter: blur(10px); }
+        h1 { font-family: 'Oswald', sans-serif; text-align: center; letter-spacing: 3px; text-transform: uppercase; border-bottom: 1px solid var(--red); padding-bottom: 10px; margin-bottom: 25px; }
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: var(--red); text-transform: uppercase; }
+        input, select { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: white; font-family: 'Roboto Mono', monospace; outline: none; box-sizing: border-box; }
+        input:focus, select:focus { border-color: var(--yellow); }
+        .error { color: var(--yellow); font-size: 11px; margin-top: 4px; text-transform: uppercase; }
+        .acciones { margin-top: 25px; display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 12px; border: none; cursor: pointer; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; text-decoration: none; text-align: center; }
+        .btn-guardar { background-color: var(--red); color: white; }
+        .btn-volver { background-color: transparent; border: 1px solid #444; color: white; }
+        .symbol { text-align: center; margin-top: 20px; opacity: 0.4; font-weight: bold; }
+    </style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div class="container">
+    <h1 th:text="${modoEdicion} ? 'Modificar Detalle' : 'Vincular Detalle'"></h1>
+    <form th:action="@{/detalles/guardar}" th:object="${detalle}" method="post">
+        <input type="hidden" th:field="*{idDetalle}">
+
+        <div class="campo">
+            <label for="pedido">ID del Pedido</label>
+            <select id="pedido" th:field="*{pedido.idPedido}">
+                <option value="" disabled selected>VINCULAR A PEDIDO...</option>
+                <option th:each="p : ${pedidos}" th:value="${p.idPedido}" th:text="'ORDEN #' + ${p.idPedido} + ' - ' + ${p.usuario.nombreUsuario}"></option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('pedido')}" th:errors="*{pedido}"></div>
+        </div>
+
+        <div class="campo">
+            <label for="producto">Producto</label>
+            <select id="producto" th:field="*{producto.idProducto}">
+                <option value="" disabled selected>SELECCIONE PRODUCTO...</option>
+                <option th:each="pr : ${productos}" th:value="${pr.idProducto}" th:text="${pr.nombreProducto}"></option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('producto')}" th:errors="*{producto}"></div>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+            <div class="campo" style="flex: 1;">
+                <label for="cantidad">Cantidad</label>
+                <input type="number" id="cantidad" th:field="*{cantidad}" placeholder="0">
+                <div class="error" th:if="${#fields.hasErrors('cantidad')}" th:errors="*{cantidad}"></div>
+            </div>
+            <div class="campo" style="flex: 1;">
+                <label for="precioUnitario">Precio Unitario</label>
+                <input type="number" step="0.01" id="precioUnitario" th:field="*{precioUnitario}" placeholder="0.00">
+                <div class="error" th:if="${#fields.hasErrors('precioUnitario')}" th:errors="*{precioUnitario}"></div>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <button type="submit" class="btn btn-guardar">[[${modoEdicion} ? 'Actualizar' : 'Añadir']]</button>
+            <a th:href="@{/detalles}" class="btn btn-volver">Cancelar</a>
+        </div>
+    </form>
+    <div class="symbol">|-/</div>
+</div>
+<script>
+    // Mismo script de partículas...
+    const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    class Particle {
+        constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2; this.speedY = Math.random() * 1 + 0.3; this.opacity = Math.random() * 0.4; }
+        update() { this.y -= this.speedY; if (this.y < 0) this.y = canvas.height; }
+        draw() { ctx.fillStyle = `rgba(227, 25, 55, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
+    function init() { for (let i = 0; i < 50; i++) particles.push(new Particle()); }
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    init(); animate();
+</script>
+</body>
+</html>

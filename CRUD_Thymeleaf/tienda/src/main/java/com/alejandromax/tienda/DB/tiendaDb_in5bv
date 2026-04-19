@@ -1,0 +1,81 @@
+drop database if exists tiendaDb_in5bv;
+create database tiendaDb_in5bv;
+use tiendaDb_in5bv;
+
+CREATE TABLE usuarios (
+    idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombreUsu VARCHAR(60) NOT NULL,
+    apellidoUsu VARCHAR(60) NOT NULL,
+    edadUsu INT NOT NULL
+);
+create table categorias(
+    idCategoria int auto_increment not null primary key,
+    nombreCategoria varchar(60) not null,
+    descripcionCategoria varchar(150)
+);
+
+create table productos(
+    idProducto int auto_increment not null primary key,
+    nombreProducto varchar(80) not null,
+    precioProducto decimal(10,2) not null,
+    stock int not null,
+    id_categoria int not null,
+    constraint fk_producto_categoria
+        foreign key (id_categoria)
+        references categorias(idCategoria)
+);
+
+create table pedidos(
+    id_pedido int auto_increment not null primary key,
+    fecha_pedido varchar(60) not null,
+    total_pedido decimal(10,2) not null,
+    id_usuario int not null,
+    constraint fk_pedido_usuario
+        foreign key (id_usuario)
+        references usuarios(idUsuario)
+);
+
+create table detalles(
+    id_detalle int auto_increment not null primary key,
+    cantidad int not null,
+    precio_unitario decimal(10,2) not null,
+    id_pedido int not null,
+    id_producto int not null,
+    constraint fk_detalle_pedido
+        foreign key (id_pedido)
+        references pedidos(id_pedido),
+    constraint fk_detalle_producto
+        foreign key (id_producto)
+        references productos(idProducto)
+);
+-- 1. Insertar usuarios
+INSERT INTO usuarios (nombreUsu, apellidoUsu, edadUsu) VALUES
+('Juan', 'Perez', 25), ('Maria', 'Lopez', 30), ('Carlos', 'Garcia', 22),
+('Ana', 'Martinez', 28), ('Luis', 'Rodriguez', 35), ('Elena', 'Hernandez', 24),
+('Pedro', 'Sanchez', 40), ('Sofia', 'Ramirez', 29), ('Diego', 'Torres', 31), ('Lucia', 'Flores', 27);
+
+-- 2. Insertar categorías
+INSERT INTO categorias (nombreCategoria, descripcionCategoria) VALUES
+('Electronica', 'Dispositivos y gadgets'), ('Ropa', 'Prendas de vestir'),
+('Hogar', 'Articulos para casa'), ('Juguetes', 'Diversion'),
+('Libros', 'Lectura variada'), ('Deportes', 'Equipamiento'),
+('Belleza', 'Cuidado personal'), ('Automotriz', 'Accesorios'),
+('Musica', 'Instrumentos'), ('Comida', 'Alimentos preparados');
+
+-- 3. Insertar productos
+INSERT INTO productos (nombreProducto, precioProducto, stock, id_categoria) VALUES
+('Laptop', 800.00, 10, 1), ('Camisa', 20.00, 50, 2), ('Silla', 45.00, 20, 3),
+('Pelota', 15.00, 100, 4), ('Novela', 10.00, 30, 5), ('Pesas', 50.00, 15, 6),
+('Shampoo', 5.00, 200, 7), ('Aceite', 12.00, 40, 8), ('Guitarra', 150.00, 5, 9), ('Pizza', 10.00, 20, 10);
+
+-- 4. Insertar pedidos
+INSERT INTO pedidos (fecha_pedido, total_pedido, id_usuario) VALUES
+('2026-04-10', 800.00, 1), ('2026-04-11', 20.00, 2), ('2026-04-11', 45.00, 3),
+('2026-04-12', 15.00, 4), ('2026-04-12', 10.00, 5), ('2026-04-13', 50.00, 6),
+('2026-04-14', 5.00, 7), ('2026-04-15', 12.00, 8), ('2026-04-15', 150.00, 9), ('2026-04-16', 10.00, 10);
+
+-- 5. Insertar detalles de pedido
+INSERT INTO detalles (cantidad, precio_unitario, id_pedido, id_producto) VALUES
+(1, 800.00, 1, 1), (1, 20.00, 2, 2), (1, 45.00, 3, 3),
+(1, 15.00, 4, 4), (1, 10.00, 5, 5), (1, 50.00, 6, 6),
+(1, 5.00, 7, 7), (1, 12.00, 8, 8), (1, 150.00, 9, 9), (1, 10.00, 10, 10);

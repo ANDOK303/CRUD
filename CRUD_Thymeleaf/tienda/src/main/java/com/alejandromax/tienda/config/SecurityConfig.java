@@ -32,13 +32,13 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(admin);
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Permitimos el acceso a la ruta de guardado
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/login", "/registro/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/login", "/registro", "/registro/guardar").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -46,10 +46,8 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                );
+                .logout(logout -> logout.permitAll());
         return http.build();
     }
+
 }

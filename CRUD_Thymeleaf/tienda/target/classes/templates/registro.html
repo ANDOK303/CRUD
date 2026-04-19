@@ -5,7 +5,6 @@
     <title>TØP - New Identity</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* COPIA AQUÍ TODOS LOS ESTILOS DE TU LOGIN.HTML PARA QUE SE VEAN IGUAL */
         :root { --red: #e31937; --black: #050505; --yellow: #fce300; --white: #ffffff; --gray: #121212; }
         body { margin: 0; background-color: var(--black); font-family: 'Roboto Mono', monospace; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: var(--white); }
         #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
@@ -16,12 +15,19 @@
         input:focus { border-bottom-color: var(--yellow); }
         button { width: 100%; background: transparent; border: 2px solid var(--red); color: var(--red); padding: 15px; font-family: 'Oswald'; cursor: pointer; letter-spacing: 4px; transition: 0.3s; margin-top: 20px; }
         button:hover { background: var(--red); color: var(--white); }
+        .msg { font-size: 0.8rem; margin-bottom: 15px; padding: 5px; }
+        .error-msg { color: var(--red); border: 1px solid var(--red); }
     </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 <div class="login-card">
     <div class="titulo">CREATE_ID</div>
+
+    <div th:if="${param.error_exists}" class="msg error-msg">
+        IDENTITY ALREADY TAKEN.
+    </div>
+
     <form th:action="@{/registro/guardar}" method="post">
         <div class="input-group">
             <input type="text" name="username" placeholder="Choose Username" required>

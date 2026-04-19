@@ -5,6 +5,7 @@ import com.alejandromax.tienda.service.CategoriaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @Controller
@@ -20,8 +21,7 @@ public class CategoriaController {
     @GetMapping
     public String lista(Model model) {
         model.addAttribute("categorias", categoriaService.listar());
-        model.addAttribute("categoria", new Categoria());
-        return "categoria";
+        return "categorias";
     }
 
     @PostMapping("/guardar")
@@ -36,7 +36,7 @@ public class CategoriaController {
         return "redirect:/categorias";
     }
 
-    @PostMapping("/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         categoriaService.eliminar(id);
         return "redirect:/categorias";
@@ -44,17 +44,8 @@ public class CategoriaController {
 
     @GetMapping("/buscar")
     public String buscarPorId(@RequestParam("id") Integer id, Model model) {
-        try {
-            Categoria categoria = categoriaService.obtenerPorId(id);
-            if (categoria != null) {
-                model.addAttribute("categorias", List.of(categoria));
-            } else {
-                model.addAttribute("categorias", List.of());
-            }
-        } catch (Exception e) {
-            model.addAttribute("categorias", List.of());
-        }
-        model.addAttribute("categoria", new Categoria());
-        return "categoria";
+        Categoria categoria = categoriaService.obtenerPorId(id);
+        model.addAttribute("categorias", categoria != null ? List.of(categoria) : List.of());
+        return "categorias";
     }
 }

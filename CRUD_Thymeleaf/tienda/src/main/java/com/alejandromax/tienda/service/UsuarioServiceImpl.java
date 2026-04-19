@@ -37,9 +37,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario actualizar(Integer id, Usuario usuario) {
         Usuario existente = obtenerPorId(id);
 
-        existente.setNombreUsuario(usuario.getNombreUsuario());
-        existente.setApellidoUsuario(usuario.getApellidoUsuario());
-        existente.setEdadUsuario(usuario.getEdadUsuario());
+
+        existente.setNombreUsu(usuario.getNombreUsu());
+        existente.setApellidoUsu(usuario.getApellidoUsu());
+        existente.setEdadUsu(usuario.getEdadUsu());
 
         return usuarioRepository.save(existente);
     }

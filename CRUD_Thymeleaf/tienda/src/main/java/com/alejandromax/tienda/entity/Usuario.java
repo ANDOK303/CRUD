@@ -1,40 +1,27 @@
 package com.alejandromax.tienda.entity;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
-@JsonPropertyOrder({
-        "idUsuario",
-        "nombreUsuario",
-        "apellidoUsuario",
-        "edadUsuario"
-})
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
+    @Column(name = "idUsuario")
     private Integer idUsuario;
 
-    @NotBlank(message = "El nombre del usuario no puede ir vacio.")
-    @Size(min = 2, max = 60, message = "El nombre debe tener entre 2 y 60 caracteres.")
-    @Column(name = "nombre_usuario")
-    private String nombreUsuario;
+    @Column(name = "nombreUsu")
+    private String nombreUsu;
 
-    @NotBlank(message = "El apellido del usuario no puede ir vacio.")
-    @Size(min = 2, max = 60, message = "El nombre debe tener entre 2 y 60 caracteres.")
-    @Column(name = "apellido_usuario")
-    private String apellidoUsuario;
+    @Column(name = "apellidoUsu")
+    private String apellidoUsu;
 
-    @NotNull(message = "La edad no puede ir vacia.")
-    @Min(value = 1, message = "La edad debe ser mayor o igual a 1.")
-    @Max(value = 120, message = "La edad debe ser menor o igual a 120.")
-    @Column(name = "edad_usuario")
-    private Integer edadUsuario;
+    @Column(name = "edadUsu")
+    private Integer edadUsu;
 
-    //Metodos Getters and Setters
+
+    public Usuario() {
+    }
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -44,27 +31,27 @@ public class Usuario {
         this.idUsuario = idUsuario;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    public String getNombreUsu() {
+        return nombreUsu;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    public void setNombreUsu(String nombreUsu) {
+        this.nombreUsu = nombreUsu;
     }
 
-    public String getApellidoUsuario() {
-        return apellidoUsuario;
+    public String getApellidoUsu() {
+        return apellidoUsu;
     }
 
-    public void setApellidoUsuario(String apellidoUsuario) {
-        this.apellidoUsuario = apellidoUsuario;
+    public void setApellidoUsu(String apellidoUsu) {
+        this.apellidoUsu = apellidoUsu;
     }
 
-    public Integer getEdadUsuario() {
-        return edadUsuario;
+    public Integer getEdadUsu() {
+        return edadUsu;
     }
 
-    public void setEdadUsuario(Integer edadUsuario) {
-        this.edadUsuario = edadUsuario;
+    public void setEdadUsu(Integer edadUsu) {
+        this.edadUsu = edadUsu;
     }
 }

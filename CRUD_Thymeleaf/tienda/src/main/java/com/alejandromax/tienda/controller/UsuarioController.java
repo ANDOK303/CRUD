@@ -21,7 +21,6 @@ public class UsuarioController {
     @GetMapping
     public String lista(Model model) {
         model.addAttribute("usuarios", usuarioService.listar());
-        model.addAttribute("usuario", new Usuario());
         return "usuarios";
     }
 
@@ -37,7 +36,7 @@ public class UsuarioController {
         return "redirect:/usuarios";
     }
 
-    @PostMapping("/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         usuarioService.eliminar(id);
         return "redirect:/usuarios";
@@ -45,17 +44,12 @@ public class UsuarioController {
 
     @GetMapping("/buscar")
     public String buscarPorId(@RequestParam("id") Integer id, Model model) {
-        try {
-            Usuario usuario = usuarioService.obtenerPorId(id);
-            if (usuario != null) {
-                model.addAttribute("usuarios", List.of(usuario));
-            } else {
-                model.addAttribute("usuarios", List.of());
-            }
-        } catch (Exception e) {
+        Usuario usuario = usuarioService.obtenerPorId(id);
+        if (usuario != null) {
+            model.addAttribute("usuarios", List.of(usuario));
+        } else {
             model.addAttribute("usuarios", List.of());
         }
-        model.addAttribute("usuario", new Usuario());
         return "usuarios";
     }
 }

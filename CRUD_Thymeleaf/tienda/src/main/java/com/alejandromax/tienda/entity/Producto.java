@@ -4,21 +4,21 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 @Entity
-@Table(name = "producto")
+@Table(name = "productos") // Coincide con tu tabla "productos"
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_producto")
+    @Column(name = "idProducto") // Sin guion bajo
     private Integer idProducto;
 
     @NotBlank(message = "El nombre no puede ir vacío.")
     @Size(max = 80)
-    @Column(name = "nombre_producto")
+    @Column(name = "nombreProducto") // Sin guion bajo
     private String nombreProducto;
 
     @NotNull(message = "El precio es obligatorio.")
     @DecimalMin(value = "0.01")
-    @Column(name = "precio_producto")
+    @Column(name = "precioProducto") // Sin guion bajo
     private Double precioProducto;
 
     @NotNull(message = "El stock es obligatorio.")

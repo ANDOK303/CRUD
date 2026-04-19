@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/productos")
+@RequestMapping("/producto")
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -31,19 +31,19 @@ public class ProductoController {
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Producto producto) {
         productoService.crear(producto);
-        return "redirect:/productos";
+        return "redirect:/producto";
     }
 
     @PostMapping("/actualizar")
     public String actualizar(@ModelAttribute Producto producto) {
         productoService.actualizar(producto.getIdProducto(), producto);
-        return "redirect:/productos";
+        return "redirect:/producto";
     }
 
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         productoService.eliminar(id);
-        return "redirect:/productos";
+        return "redirect:/producto";
     }
 
     @GetMapping("/buscar")
@@ -57,5 +57,7 @@ public class ProductoController {
         model.addAttribute("categorias", categoriaService.listar());
         model.addAttribute("producto", new Producto());
         return "producto";
+
     }
+
 }

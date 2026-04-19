@@ -9,7 +9,6 @@
         body { margin: 0; font-family: 'Roboto Mono', monospace; background-color: var(--black); color: var(--white); min-height: 100vh; overflow-x: hidden; }
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* NAVBAR ESTILO CLANCY */
         .navbar { background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--red); padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: center; gap: 20px; backdrop-filter: blur(5px); }
         .nav-link { color: var(--white); text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 1.1rem; text-transform: uppercase; transition: 0.3s; letter-spacing: 2px; }
         .nav-link:hover { color: var(--red); border-bottom: 1px solid var(--red); }
@@ -46,7 +45,7 @@
 <nav class="navbar">
     <a th:href="@{/}" class="nav-link">HOME</a>
     <a th:href="@{/usuarios}" class="nav-link">USUARIOS</a>
-    <a th:href="@{/productos}" class="nav-link">PRODUCTOS</a>
+    <a th:href="@{/producto}" class="nav-link">PRODUCTOS</a>
     <a th:href="@{/pedidos}" class="nav-link nav-active">PEDIDOS</a>
     <a th:href="@{/detalles}" class="nav-link">DETALLES</a>
 </nav>
@@ -78,7 +77,7 @@
             <td th:text="${p.idPedido}"></td>
             <td th:text="${p.fechaPedido}"></td>
             <td th:text="${'Q' + p.totalPedido}"></td>
-            <td th:text="${p.usuario.nombreUsuario + ' ' + p.usuario.apellidoUsuario}"></td>
+            <td th:text="${p.usuario.nombreUsu + ' ' + p.usuario.apellidoUsu}"></td>
             <td>
                 <a th:href="@{/detalles/buscar(id=${p.idPedido})}" class="btn btn-ver">VER_PRODUCTOS</a>
             </td>
@@ -110,7 +109,7 @@
                     <label>USUARIO</label>
                     <select name="usuario.idUsuario" id="inputUser">
                         <option value="" disabled selected>Seleccione...</option>
-                        <option th:each="u : ${usuarios}" th:value="${u.idUsuario}" th:text="${u.nombreUsuario + ' ' + u.apellidoUsuario}"></option>
+                        <option th:each="u : ${usuarios}" th:value="${u.idUsuario}" th:text="${u.nombreUsu + ' ' + u.apellidoUsu}"></option>
                     </select>
                 </div>
             </div>
@@ -158,7 +157,6 @@
         } else if (tipo === 'editar') {
             form.action = "/pedidos/actualizar";
             document.getElementById('inputID').value = id;
-            document.getElementById('inputNombre').value = nombre; // Nota: Corregir si es necesario
             document.getElementById('inputFecha').value = fecha;
             document.getElementById('inputTotal').value = total;
             document.getElementById('inputUser').value = user;
